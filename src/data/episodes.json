@@ -1,112 +1,13 @@
 [
   {
     "titles": [
-      "test",
-      "test1"
+      "التحرير",
+      "هزيمة قاصية",
+      "الهزيمة"
     ],
-    "feature_flag_key": "episode_1",
-    "feature_status": "disabled",
-    "duration": "5",
-    "description": "ok",
-    "id": 1
-  },
-  {
-    "titles": [
-      "test",
-      "test1"
-    ],
-    "feature_flag_key": "episode_2",
-    "feature_status": "disabled",
-    "duration": "6",
-    "description": "kk",
-    "id": 2
-  },
-  {
-    "titles": [
-      "test",
-      "test1"
-    ],
-    "feature_flag_key": "episode_3",
-    "feature_status": "disabled",
-    "duration": "oo",
-    "id": 3
-  },
-  {
-    "titles": [
-      "hi",
-      "ok"
-    ],
-    "duration": "9",
-    "id": 4
-  },
-  {
-    "titles": [
-      "hi",
-      "ok"
-    ],
-    "duration": "9",
-    "id": 5
-  },
-  {
-    "titles": [
-      "hi",
-      "ok"
-    ],
-    "duration": "9",
-    "id": 6
-  },
-  {
-    "titles": [
-      "hi",
-      "ok"
-    ],
-    "duration": "9",
-    "id": 7
-  },
-  {
-    "titles": [
-      "try",
-      "yy"
-    ],
-    "duration": "5",
-    "id": 8
-  },
-  {
-    "titles": [
-      "ex1",
-      "ex2"
-    ],
-    "duration": "6",
-    "id": 9
-  },
-  {
-    "titles": [
-      "hi ok",
-      "pk ho"
-    ],
-    "duration": "9",
-    "id": 10,
-    "feature_flag_key": "episode-10",
-    "feature_status": "enabled"
-  },
-  {
-    "titles": [
-      "exx",
-      "exx2"
-    ],
-    "duration": "5",
-    "id": 11,
-    "feature_flag_key": "episode-11",
-    "feature_status": "enabled"
-  },
-  {
-    "titles": [
-      "hi ex",
-      "ok ex"
-    ],
-    "duration": "5",
-    "id": 12,
-    "feature_flag_key": "episode-12",
-    "feature_status": "enabled"
+    "duration": "12",
+    "id": 1,
+    "feature_flag_key": "episode-1",
+    "feature_status": "running"
   }
 ]

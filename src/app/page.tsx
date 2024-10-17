@@ -1,19 +1,16 @@
-// src/app/page.tsx
 "use client";
-// src/app/page.tsx
-
 import React, { useEffect, useState } from 'react';
 import EpisodeCard from '../components/episodes/EpisodeCard';
 import EpisodeModal from '../components/episodes/EpisodeModal';
 import { Button, Container } from '@mui/material';
 import { Episode } from '@/types/episode';
 import posthog from 'posthog-js';
+import { useFeatureValue } from '@growthbook/growthbook-react';
 
 const LandingPage = () => {
   const [episodes, setEpisodes] = useState<Episode[]>([]);
   const [open, setOpen] = useState(false);
-  const pageTitle = posthog.getFeatureFlagPayload('page-title') as any
-  console.log(pageTitle)
+  const pageTitle = useFeatureValue("simpleNextTitle", "fallback");
 
   const fetchEpisodes = async () => {
     const res = await fetch('/api/episodes');
@@ -22,7 +19,7 @@ const LandingPage = () => {
   };
 
   useEffect(() => {
-    posthog.setPersonProperties({ 'is_logged_in': true, 'email': 'ex2@g.com'});
+    // posthog.setPersonProperties({ 'is_logged_in': true, 'email': 'ex2@g.com'});
     fetchEpisodes();
   }, []);
 
@@ -34,7 +31,7 @@ const LandingPage = () => {
 
   return (
     <Container className="my-10">
-      <h1 className="text-3xl font-bold mb-6">Episodes - {pageTitle?.title} </h1>
+      <h1 className="text-3xl font-bold mb-6">Episodes - {pageTitle} </h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
         {episodes.map((episode) => (
           <EpisodeCard key={episode.id} episode={episode} />

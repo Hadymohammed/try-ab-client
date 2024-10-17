@@ -4,6 +4,9 @@ import { Episode } from "../../types/episode";
 import { useRouter } from "next/navigation";
 import posthog from "posthog-js";
 import { useEffect } from "react";
+import { useFeature, useFeatureValue } from "@growthbook/growthbook-react";
+import { analytics, id } from "@/app/layout";
+import { logEvent } from "firebase/analytics";
 
 interface EpisodeCardProps {
   episode: Episode;
@@ -11,23 +14,25 @@ interface EpisodeCardProps {
 
 const EpisodeCard: React.FC<EpisodeCardProps> = ({ episode }) => {
   const router = useRouter();
-  const episodeTitle = episode.feature_status == "enabled" ?  (posthog.getFeatureFlagPayload(episode.feature_flag_key as string) as any)?.title : episode.titles[0];
-  console.log(episode.id,episode.feature_flag_key,posthog.getFeatureFlagPayload(episode.feature_flag_key as string));
+  const feature = useFeature(episode.feature_flag_key as string);
+  const { experiment, experimentResult } = feature;
+
+  const episodeTitle = episode.feature_status == "running" ?  (useFeatureValue(episode.feature_flag_key as string,"title") as any) : episode.titles[0];
+
   const handleClick = () => {
-    posthog.capture("episode_clicked", {
-      episodeId: episode.id,
-      $feature_flag: posthog.getFeatureFlag(episode.feature_flag_key as string)
+    console.log("Episode selected event fired:", {
+      experiment_id: experiment?.key,
+      variation_id: experimentResult?.variationId,
+      user_id: id.toString(),
+    });
+    logEvent(analytics,"episode-selected", {
+      experiment_id: experiment?.key,
+      variation_id: experimentResult?.variationId,
+      user_id: id.toString(),
     });
     router.push(`/episodes/${episode.id}`);
   };
 
-  useEffect(() => {
-    posthog.capture("episode_viewed", {
-      episodeId: episode.id,
-      $feature_flag: posthog.getFeatureFlag(episode.feature_flag_key as string)
-    });
-  }
-  ,[]);
   return (
     <Card onClick={handleClick} style={{ margin: "10px", cursor: "pointer" }}>
       <CardContent>

@@ -4,8 +4,8 @@ import Modal from '@mui/material/Modal';
 import { Button, IconButton } from '@mui/material';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { Add, Remove } from '@mui/icons-material';
-import { PostHogService } from '@/services/posthog.service';
 import { Episode } from '@/types/episode';
+import { GrowthBookService } from '@/services/growthBook.service';
 
 const EpisodeModal = ({ open, onClose, onNewEpisode }: any) => {
   const { register, handleSubmit, reset, control } = useForm({
@@ -22,14 +22,14 @@ const EpisodeModal = ({ open, onClose, onNewEpisode }: any) => {
 
   const handleCreateEpisodeExperiment = async (episode:Episode) => {
     try{
-      const experiment = await PostHogService.createEpisodeExperiment(episode.id, episode.titles);
-      console.log(experiment);
+      const experiment = await GrowthBookService.createEpisodeExperiment(episode.id, episode.titles);
+      console.log("Experiment created:", experiment);
       const res = await fetch(`/api/episodes`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ ...episode, feature_flag_key: experiment.feature_flag_key, feature_status: 'enabled' }),
+        body: JSON.stringify({ ...episode, feature_flag_key: experiment.featureFlagKey, feature_status: experiment.status }),
       });
     } catch (error) {
       console.error("Error creating experiment:", error);
@@ -52,7 +52,7 @@ const EpisodeModal = ({ open, onClose, onNewEpisode }: any) => {
       const episode:Episode = await response.json();
       await handleCreateEpisodeExperiment(episode);      
       reset(); // Reset the form
-      // await onNewEpisode(); // Call the refresh function
+      await onNewEpisode(); // Call the refresh function
     } else {
       console.error('Failed to add new episode');
     }

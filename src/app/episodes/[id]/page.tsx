@@ -2,9 +2,10 @@
 "use client"; // Mark this file as a client component
 
 import React, { useEffect, useState } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Episode } from "../../../types/episode";
 import { usePostHog } from "posthog-js/react";
+import { useFeature, useFeatureValue } from "@growthbook/growthbook-react";
 
 interface EpisodePageProps {
   params: { id: string };
@@ -12,11 +13,12 @@ interface EpisodePageProps {
 
 const EpisodePage = ({ params }: EpisodePageProps) => {
   const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
   const { id } = params;
+
   const [episode, setEpisode] = useState<Episode | null>(null);
   const [episodeTitle, setEpisodeTitle] = useState<string | null>(null);
+
+  const posthog = usePostHog();
 
   useEffect(() => {
     const fetchEpisode = async () => {
@@ -24,8 +26,6 @@ const EpisodePage = ({ params }: EpisodePageProps) => {
         const response = await fetch(`/api/episodes`);
         const episodes: Episode[] = await response.json();
         const foundEpisode = episodes.find((ep) => ep.id === +id);
-        const episodeTitle = foundEpisode?.feature_status == "enabled" ?  (posthog.getFeatureFlagPayload(foundEpisode.feature_flag_key as string) as any).title : foundEpisode?.titles[0];
-        setEpisodeTitle(episodeTitle);
         setEpisode(foundEpisode || null);
       } catch (error) {
         console.error("Failed to fetch episode:", error);
@@ -35,7 +35,17 @@ const EpisodePage = ({ params }: EpisodePageProps) => {
     fetchEpisode();
   }, [id]);
 
-  const posthog = usePostHog();
+  // const feature = useFeature(episode?.feature_flag_key || "");
+
+  const episodeTitleValue = episode?.feature_status === "running"
+    ? useFeatureValue(episode?.feature_flag_key || "", "title")
+    : episode?.titles?.[0];
+
+  useEffect(() => {
+    if (episodeTitleValue) {
+      setEpisodeTitle(episodeTitleValue as string);
+    }
+  }, [episodeTitleValue]);
 
   if (!episode) return <div>Loading...</div>;
 
@@ -51,7 +61,7 @@ const EpisodePage = ({ params }: EpisodePageProps) => {
             $feature_flag: posthog.getFeatureFlag(episode.feature_flag_key as string)
           });
         }}
-        className="mr-2 mt-4 bg-blue-500 text-white rounded-md px-4 py-2" 
+        className="mr-2 mt-4 bg-blue-500 text-white rounded-md px-4 py-2"
       >
         Episode Action
       </button>
