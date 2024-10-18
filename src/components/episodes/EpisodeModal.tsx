@@ -11,7 +11,7 @@ const EpisodeModal = ({ open, onClose, onNewEpisode }: any) => {
   const { register, handleSubmit, reset, control } = useForm({
     defaultValues: {
       titles: [{ value: '' }],
-      duration: '',
+      audio_url: '',
     },
   });
 
@@ -48,7 +48,7 @@ const EpisodeModal = ({ open, onClose, onNewEpisode }: any) => {
       },
       body: JSON.stringify({
         titles: data.titles.map((t: { value: string }) => ({ title: t.value , variation_id: null })),
-        duration: data.duration,
+        audio_url: data.audio_url,
       }),
     });
 
@@ -95,8 +95,8 @@ const EpisodeModal = ({ open, onClose, onNewEpisode }: any) => {
           </Button>
           <input
             type="text"
-            placeholder="Duration"
-            {...register('duration', { required: true })}
+            placeholder="audio url"
+            {...register('audio_url', { required: true })}
             className="border border-gray-300 rounded-lg p-2 mb-4 w-full"
           />
           <Button

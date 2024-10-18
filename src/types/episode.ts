@@ -7,6 +7,7 @@ export interface Episode {
   feature_flag_key?: string;
   feature_status?: "running" | "stopped";
   experiment_id?: string;
+  audio_url?: string;
 }
 
 export interface EpisodeTitleVariation {

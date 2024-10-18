@@ -7,6 +7,10 @@ import { Episode } from "../../../types/episode";
 import { usePostHog } from "posthog-js/react";
 import { useFeature, useFeatureValue } from "@growthbook/growthbook-react";
 import { GrowthBookService, IExperimentResult } from "@/services/growthBook.service";
+import ReactPlayer from "react-player";
+import { logEvent } from "firebase/analytics";
+import { analytics } from "@/app/layout";
+import exp from "constants";
 
 interface EpisodePageProps {
   params: { id: string };
@@ -18,7 +22,8 @@ const EpisodePage = ({ params }: EpisodePageProps) => {
 
   const [episode, setEpisode] = useState<Episode | null>(null);
   const [episodeTitle, setEpisodeTitle] = useState<string | null>(null);
-  const [experimentResult, setExperimentResult] = useState<IExperimentResult | null>(null);
+  const [results, setResult] = useState<IExperimentResult | null>(null);
+  const [duration , setDuration] = useState<number | null>(null);
 
   const posthog = usePostHog();
 
@@ -38,7 +43,7 @@ const EpisodePage = ({ params }: EpisodePageProps) => {
     const fetchExperimentResult = async (experiment_id: string) => {
       try {
         const result = await GrowthBookService.getExperimentResults(experiment_id); 
-        setExperimentResult(result);
+        setResult(result);
       } catch (error) {
         console.error("Failed to fetch experiment result:", error);
       }
@@ -46,6 +51,9 @@ const EpisodePage = ({ params }: EpisodePageProps) => {
 
     fetchEpisode();
   }, [id]);
+
+  const feature = useFeature(episode?.feature_flag_key as string);
+  const { experiment, experimentResult } = feature;
 
   const episodeTitleValue = episode?.feature_status === "running"
     ? useFeatureValue(episode?.feature_flag_key || "", "title")
@@ -69,7 +77,7 @@ const EpisodePage = ({ params }: EpisodePageProps) => {
         {episodeTitle}
       </Typography>
       <Typography variant="subtitle1" color="textSecondary">
-        Duration: {episode.duration}
+        Duration: {duration} secs
       </Typography>
       <Typography variant="body1" mt={2}>
         {episode.description}
@@ -90,18 +98,39 @@ const EpisodePage = ({ params }: EpisodePageProps) => {
           Back
         </Button>
       </Box>
+      <ReactPlayer
+        url={episode.audio_url}
+        progressInterval={1000}
+        controls
+        onDuration={(duration) => {
+          console.log("Episode duration:", duration);
+          setDuration(duration);
+        }}
+        onProgress={(progress) => {
+          logEvent(analytics, "episode-listened", {
+            episode_id: episode.id.toString(),
+            experiment_id: experiment?.key,
+            variation_id: experimentResult?.variationId,
+            user_id: id.toString(),
+            played_seconds: progress.playedSeconds,
+            duration: duration,
+          })
+        }}
+        className="mt-4"
+        width="100%"
+      />
 
-      {experimentResult && (
+      {results && (
         <Box mt={6}>
           <Typography variant="h5" gutterBottom>
             Experiment Results
           </Typography>
           <Typography variant="body2" color="textSecondary">
-            Total Users: {experimentResult.totalUsers}
+            Total Users: {results.totalUsers}
           </Typography>
 
           {/* Display variations with titles */}
-          {experimentResult.metrics[0].variations.map((variation) => (
+          {results.metrics[0].variations.map((variation) => (
             <Card key={variation.variationId} variant="outlined" sx={{ mt: 2 }}>
               <CardContent>
                 <Typography variant="h6">
@@ -138,20 +167,20 @@ const EpisodePage = ({ params }: EpisodePageProps) => {
               xAxis={[
                 {
                   id: "titles",
-                  data: experimentResult.metrics[0].variations.map((v) => getTitleForVariation(v.variationId)),
+                  data: results.metrics[0].variations.map((v) => getTitleForVariation(v.variationId)),
                   label: "Titles",
                   scaleType: "band",
                 },
               ]}
               series={[
                 {
-                  data: experimentResult.metrics[0].variations.map((v) => v.analyses[0].denominator),
+                  data: results.metrics[0].variations.map((v) => v.analyses[0].denominator),
                   label: "Total Users",
                   color: "rgba(63, 81, 181, 0.6)",
                   xAxisKey: "titles",
                 },
                 {
-                  data: experimentResult.metrics[0].variations.map((v) => v.analyses[0].numerator),
+                  data: results.metrics[0].variations.map((v) => v.analyses[0].numerator),
                   label: "Users Clicked",
                   color: "rgba(76, 175, 80, 0.6)",
                   xAxisKey: "titles",

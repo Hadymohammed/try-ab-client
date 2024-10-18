@@ -18,7 +18,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 export const analytics = getAnalytics(app);
-export const id =4; //this sumulates the user id
+export const id =11; //this sumulates the user id
 const growthbook = new GrowthBook({
   apiHost: process.env.NEXT_PUBLIC_GROWTHBOOK_API_HOST,
   clientKey: process.env.NEXT_PUBLIC_GROWTHBOOK_CLIENT_KEY,

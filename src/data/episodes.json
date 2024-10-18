@@ -11,6 +11,7 @@
       }
     ],
     "duration": "9",
+    "audio_url": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
     "id": 1,
     "feature_flag_key": "episode-1",
     "feature_status": "running",
@@ -29,8 +30,26 @@
     ],
     "duration": "12",
     "id": 2,
+    "audio_url": "https://www.youtube.com/watch?v=YD2gdmOt6oY&list=RDYD2gdmOt6oY&start_radio=1",
     "feature_flag_key": "episode-2",
     "feature_status": "running",
     "experiment_id": "exp_19g626m2eq27in"
+  },
+  {
+    "titles": [
+      {
+        "variation_id": "var_19g622m2evzmbb",
+        "title": "مصر"
+      },
+      {
+        "variation_id": "var_19g622m2evzmbc",
+        "title": "كيميت"
+      }
+    ],
+    "audio_url": "https://www.youtube.com/watch?v=-0bS9apr8kI&pp=ygUh2YXYtdixINiq2KrYrdiv2Ksg2LnZhiDZhtmB2LPZh9in",
+    "id": 3,
+    "feature_flag_key": "episode-3",
+    "feature_status": "running",
+    "experiment_id": "exp_19g622m2evzmbd"
   }
 ]
