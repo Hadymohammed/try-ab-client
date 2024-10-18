@@ -1,14 +1,12 @@
-// src/app/episodes/[id]/page.tsx
-"use client"; // Mark this file as a client component
-
+"use client"; 
+import { BarChart } from "@mui/x-charts/BarChart";
+import { Box, Button, Card, CardContent, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Episode } from "../../../types/episode";
 import { usePostHog } from "posthog-js/react";
 import { useFeature, useFeatureValue } from "@growthbook/growthbook-react";
 import { GrowthBookService, IExperimentResult } from "@/services/growthBook.service";
-import { Box, Button, Card, CardContent, Typography } from "@mui/material";
-import { BarChart } from "@mui/x-charts/BarChart";
 
 interface EpisodePageProps {
   params: { id: string };
@@ -49,8 +47,6 @@ const EpisodePage = ({ params }: EpisodePageProps) => {
     fetchEpisode();
   }, [id]);
 
-  // const feature = useFeature(episode?.feature_flag_key || "");
-
   const episodeTitleValue = episode?.feature_status === "running"
     ? useFeatureValue(episode?.feature_flag_key || "", "title")
     : episode?.titles?.[0].title;
@@ -67,7 +63,7 @@ const EpisodePage = ({ params }: EpisodePageProps) => {
 
   if (!episode) return <div>Loading...</div>;
 
-  return  (
+  return (
     <Box p={4}>
       <Typography variant="h4" gutterBottom>
         {episodeTitle}
@@ -111,11 +107,13 @@ const EpisodePage = ({ params }: EpisodePageProps) => {
                 <Typography variant="h6">
                   Title: {getTitleForVariation(variation.variationId)}
                 </Typography>
-                <Typography variant="body2">Users: {variation.users}</Typography>
+                <Typography variant="body2">
+                  Users Clicked: {variation.analyses[0].numerator} / Total Users: {variation.analyses[0].denominator}
+                </Typography>
                 {variation.analyses.map((analysis, index) => (
                   <Box key={index} mt={1}>
                     <Typography variant="body2">
-                      Mean Click Rate: {analysis.mean}
+                      Mean Click Rate: {(analysis.mean * 100).toFixed(2)}%
                     </Typography>
                     <Typography variant="body2">
                       Confidence Interval: [{analysis.ciLow}, {analysis.ciHigh}]
@@ -132,25 +130,34 @@ const EpisodePage = ({ params }: EpisodePageProps) => {
           {/* Display a simple bar chart for user counts */}
           <Box mt={4}>
             <Typography variant="h6" gutterBottom>
-              User Distribution per Title
+              Click Distribution per Title
             </Typography>
             <BarChart
-              width={500}
+              width={600}
               height={300}
               xAxis={[
                 {
-                  id: 'titles',
+                  id: "titles",
                   data: experimentResult.metrics[0].variations.map((v) => getTitleForVariation(v.variationId)),
-                  label: 'Titles',
-                  scaleType: 'band'
+                  label: "Titles",
+                  scaleType: "band",
                 },
               ]}
               series={[
                 {
-                  data: experimentResult.metrics[0].variations.map((v) => v.users),
-                  label: 'Users',
+                  data: experimentResult.metrics[0].variations.map((v) => v.analyses[0].denominator),
+                  label: "Total Users",
+                  color: "rgba(63, 81, 181, 0.6)",
+                  xAxisKey: "titles",
+                },
+                {
+                  data: experimentResult.metrics[0].variations.map((v) => v.analyses[0].numerator),
+                  label: "Users Clicked",
+                  color: "rgba(76, 175, 80, 0.6)",
+                  xAxisKey: "titles",
                 },
               ]}
+              layout="vertical"
             />
           </Box>
         </Box>
