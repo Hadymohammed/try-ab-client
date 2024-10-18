@@ -5,9 +5,29 @@
       "هزيمة قاصية",
       "الهزيمة"
     ],
-    "duration": "12",
+    "duration": "6",
     "id": 1,
     "feature_flag_key": "episode-1",
+    "feature_status": "running"
+  },
+  {
+    "titles": [
+      "مصر",
+      "كيميت"
+    ],
+    "duration": "9",
+    "id": 2,
+    "feature_flag_key": "episode-2",
+    "feature_status": "running"
+  },
+  {
+    "titles": [
+      "الروبوت",
+      "الذكاء الاصطناعي"
+    ],
+    "duration": "9",
+    "id": 3,
+    "feature_flag_key": "episode-3",
     "feature_status": "running"
   }
 ]

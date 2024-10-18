@@ -15,7 +15,7 @@ export class GrowthBookService {
         metrics: ["fact__19g61wm2dmwm6p"],
         status: "running",
         autoRefresh: true,
-        variations: titles.map((title,index) => ({id:index.toString(),key:`variant-${index}`,name:title}))
+        variations: titles.map((title,index) => ({id:index.toString(),key:index.toString(),name:title})) //key should be a number 
      }
 
       const res =  await this._createExperiment(experiment);
@@ -25,7 +25,6 @@ export class GrowthBookService {
       for(let i = 0; i < titles.length; i++){
         variations[i].value = titles[i]
       }
-      console.log("Variations:",variations);
       await this._createFeatureFlag(episodeId,experimentId as string,variations);
       return {
         experimentId: experimentId as string,

@@ -22,7 +22,7 @@ const EpisodeCard: React.FC<EpisodeCardProps> = ({ episode }) => {
   const handleClick = () => {
     console.log("Episode selected event fired:", {
       experiment_id: experiment?.key,
-      variation_id: experimentResult?.variationId,
+      variation_id: experimentResult?.variationId, //which is the variation key on creating the experiment
       user_id: id.toString(),
     });
     logEvent(analytics,"episode-selected", {
