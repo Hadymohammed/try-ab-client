@@ -27,7 +27,7 @@ export class GrowthBookService {
         trackingKey: trackingKey,
         project: this.projectID,
         name: `Episode-${episodeId}`,
-        metrics: ["fact__19g61wm2dmwm6p"],
+        metrics: ["fact__19g62cm2eycnma"],
         status: "running",
         autoRefresh: true,
         variations: titles.map((title,index) => ({id:index.toString(),key:index.toString(),name:title.title})) //key should be a number 
