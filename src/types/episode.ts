@@ -6,6 +6,7 @@ export interface Episode {
   description: string;
   feature_flag_key?: string;
   feature_status?: "running" | "stopped";
+  experiment_id?: string;
 }
 
 export interface EpisodeTitleVariation {
