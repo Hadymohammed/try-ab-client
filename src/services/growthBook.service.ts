@@ -4,6 +4,20 @@ import axios from 'axios';
 export class GrowthBookService {
   private static projectID = process.env.NEXT_PUBLIC_PROJECT_ID as string;
 
+    public static async getExperimentResults(experimentId: string): Promise<IExperimentResult> {
+        try {
+          const res = await fetch(`${process.env.NEXT_PUBLIC_GROWTHBOOK_API_URL}/api/v1/experiments/${experimentId}/results`, {
+            headers: {
+              Authorization: `Bearer ${process.env.NEXT_PUBLIC_GROWTHBOOK_API_KEY}`,
+            },
+          });
+          const data = await res.json();
+          return data.result?.results[0] as IExperimentResult || null;
+        } catch (error) {
+          console.error("Error getting experiment results:", error);
+          throw error;
+        }
+    }
 
     public static async createEpisodeExperiment(episodeId:number,titles:EpisodeTitleVariation[]): Promise<IExperimentResponse> {
       const trackingKey = `episode-${episodeId}`;
@@ -161,4 +175,38 @@ export interface IExperimentResponse {
     variations: IVariation[];
     featureFlagKey: string;
     status: "running" | "stopped";
+}
+
+export interface IExperimentResult {
+    dimension: string;
+    totalUsers: number;
+    checks: {
+        [key: string]: number;
+    };
+    metrics: IMetric[];
+}
+
+export interface IMetric {
+    metricId: string;
+    variations: IVariationResult[];
+}
+
+export interface IVariationResult {
+    variationId: string;
+    users: number;
+    analyses: IAnalysis[];
+}
+
+export interface IAnalysis {
+    engine: string;
+    numerator: number;
+    denominator: number;
+    mean: number;
+    stddev: number;
+    percentChange: number;
+    ciLow: number;
+    ciHigh: number;
+    pValue: number;
+    risk: number;
+    chanceToBeatControl: number;
 }

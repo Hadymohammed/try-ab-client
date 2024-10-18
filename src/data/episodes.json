@@ -15,5 +15,22 @@
     "feature_flag_key": "episode-1",
     "feature_status": "running",
     "experiment_id": "exp_19g61wm2eowf13"
+  },
+  {
+    "titles": [
+      {
+        "variation_id": "var_19g626m2eq27il",
+        "title": "محمد صلاح"
+      },
+      {
+        "variation_id": "var_19g626m2eq27im",
+        "title": "ليفربول"
+      }
+    ],
+    "duration": "12",
+    "id": 2,
+    "feature_flag_key": "episode-2",
+    "feature_status": "running",
+    "experiment_id": "exp_19g626m2eq27in"
   }
 ]

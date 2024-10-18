@@ -6,6 +6,9 @@ import { useRouter } from "next/navigation";
 import { Episode } from "../../../types/episode";
 import { usePostHog } from "posthog-js/react";
 import { useFeature, useFeatureValue } from "@growthbook/growthbook-react";
+import { GrowthBookService, IExperimentResult } from "@/services/growthBook.service";
+import { Box, Button, Card, CardContent, Typography } from "@mui/material";
+import { BarChart } from "@mui/x-charts/BarChart";
 
 interface EpisodePageProps {
   params: { id: string };
@@ -17,6 +20,7 @@ const EpisodePage = ({ params }: EpisodePageProps) => {
 
   const [episode, setEpisode] = useState<Episode | null>(null);
   const [episodeTitle, setEpisodeTitle] = useState<string | null>(null);
+  const [experimentResult, setExperimentResult] = useState<IExperimentResult | null>(null);
 
   const posthog = usePostHog();
 
@@ -27,8 +31,18 @@ const EpisodePage = ({ params }: EpisodePageProps) => {
         const episodes: Episode[] = await response.json();
         const foundEpisode = episodes.find((ep) => ep.id === +id);
         setEpisode(foundEpisode || null);
+        await fetchExperimentResult(foundEpisode?.experiment_id as string);
       } catch (error) {
         console.error("Failed to fetch episode:", error);
+      }
+    };
+
+    const fetchExperimentResult = async (experiment_id: string) => {
+      try {
+        const result = await GrowthBookService.getExperimentResults(experiment_id); 
+        setExperimentResult(result);
+      } catch (error) {
+        console.error("Failed to fetch experiment result:", error);
       }
     };
 
@@ -47,23 +61,101 @@ const EpisodePage = ({ params }: EpisodePageProps) => {
     }
   }, [episodeTitleValue]);
 
+  const getTitleForVariation = (variationId: string) => {
+    return episode?.titles.find((title) => title.variation_id === variationId)?.title || "Unknown Title";
+  };
+
   if (!episode) return <div>Loading...</div>;
 
-  return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold">{episodeTitle}</h1>
-      <p className="mt-2 text-gray-700">Duration: {episode.duration}</p>
-      <p className="mt-4">{episode.description}</p>
-      <button
-        className="mr-2 mt-4 bg-blue-500 text-white rounded-md px-4 py-2"
-      >
-        Episode Action
-      </button>
-      <button onClick={() => router.back()} className="mt-4 bg-blue-500 text-white rounded-md px-4 py-2">
-        Back
-      </button>
-    </div>
+  return  (
+    <Box p={4}>
+      <Typography variant="h4" gutterBottom>
+        {episodeTitle}
+      </Typography>
+      <Typography variant="subtitle1" color="textSecondary">
+        Duration: {episode.duration}
+      </Typography>
+      <Typography variant="body1" mt={2}>
+        {episode.description}
+      </Typography>
+      <Box mt={4}>
+        <Button
+          variant="contained"
+          color="primary"
+          sx={{ mr: 2 }}
+        >
+          Episode Action
+        </Button>
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={() => router.back()}
+        >
+          Back
+        </Button>
+      </Box>
+
+      {experimentResult && (
+        <Box mt={6}>
+          <Typography variant="h5" gutterBottom>
+            Experiment Results
+          </Typography>
+          <Typography variant="body2" color="textSecondary">
+            Total Users: {experimentResult.totalUsers}
+          </Typography>
+
+          {/* Display variations with titles */}
+          {experimentResult.metrics[0].variations.map((variation) => (
+            <Card key={variation.variationId} variant="outlined" sx={{ mt: 2 }}>
+              <CardContent>
+                <Typography variant="h6">
+                  Title: {getTitleForVariation(variation.variationId)}
+                </Typography>
+                <Typography variant="body2">Users: {variation.users}</Typography>
+                {variation.analyses.map((analysis, index) => (
+                  <Box key={index} mt={1}>
+                    <Typography variant="body2">
+                      Mean Click Rate: {analysis.mean}
+                    </Typography>
+                    <Typography variant="body2">
+                      Confidence Interval: [{analysis.ciLow}, {analysis.ciHigh}]
+                    </Typography>
+                    <Typography variant="body2">
+                      Chance to Beat Control: {(analysis.chanceToBeatControl * 100).toFixed(2)}%
+                    </Typography>
+                  </Box>
+                ))}
+              </CardContent>
+            </Card>
+          ))}
+
+          {/* Display a simple bar chart for user counts */}
+          <Box mt={4}>
+            <Typography variant="h6" gutterBottom>
+              User Distribution per Title
+            </Typography>
+            <BarChart
+              width={500}
+              height={300}
+              xAxis={[
+                {
+                  id: 'titles',
+                  data: experimentResult.metrics[0].variations.map((v) => getTitleForVariation(v.variationId)),
+                  label: 'Titles',
+                  scaleType: 'band'
+                },
+              ]}
+              series={[
+                {
+                  data: experimentResult.metrics[0].variations.map((v) => v.users),
+                  label: 'Users',
+                },
+              ]}
+            />
+          </Box>
+        </Box>
+      )}
+    </Box>
   );
 };
-
 export default EpisodePage;
