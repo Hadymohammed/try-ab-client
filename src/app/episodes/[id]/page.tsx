@@ -39,7 +39,7 @@ const EpisodePage = ({ params }: EpisodePageProps) => {
 
   const episodeTitleValue = episode?.feature_status === "running"
     ? useFeatureValue(episode?.feature_flag_key || "", "title")
-    : episode?.titles?.[0];
+    : episode?.titles?.[0].title;
 
   useEffect(() => {
     if (episodeTitleValue) {
@@ -55,12 +55,6 @@ const EpisodePage = ({ params }: EpisodePageProps) => {
       <p className="mt-2 text-gray-700">Duration: {episode.duration}</p>
       <p className="mt-4">{episode.description}</p>
       <button
-        onClick={() => {
-          posthog.capture("episode_action", {
-            episodeId: episode.id,
-            $feature_flag: posthog.getFeatureFlag(episode.feature_flag_key as string)
-          });
-        }}
         className="mr-2 mt-4 bg-blue-500 text-white rounded-md px-4 py-2"
       >
         Episode Action

@@ -24,12 +24,16 @@ const EpisodeModal = ({ open, onClose, onNewEpisode }: any) => {
     try{
       const experiment = await GrowthBookService.createEpisodeExperiment(episode.id, episode.titles);
       console.log("Experiment created:", experiment);
+      episode.titles = experiment.variations.map(v => ({
+        variation_id: v.id,
+        title: v.value as string
+      }));
       const res = await fetch(`/api/episodes`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ ...episode, feature_flag_key: experiment.featureFlagKey, feature_status: experiment.status }),
+        body: JSON.stringify({ ...episode, feature_flag_key: experiment.featureFlagKey, feature_status: experiment.status, experiment_id: experiment.experimentId }),
       });
     } catch (error) {
       console.error("Error creating experiment:", error);
@@ -43,7 +47,7 @@ const EpisodeModal = ({ open, onClose, onNewEpisode }: any) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        titles: data.titles.map((t: { value: string }) => t.value),
+        titles: data.titles.map((t: { value: string }) => ({ title: t.value , variation_id: null })),
         duration: data.duration,
       }),
     });

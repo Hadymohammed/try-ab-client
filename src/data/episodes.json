@@ -1,33 +1,19 @@
 [
   {
     "titles": [
-      "التحرير",
-      "هزيمة قاصية",
-      "الهزيمة"
+      {
+        "variation_id": "var_19g61wm2eowf11",
+        "title": "التحرير"
+      },
+      {
+        "variation_id": "var_19g61wm2eowf12",
+        "title": "هزيمة قاصية"
+      }
     ],
-    "duration": "6",
+    "duration": "9",
     "id": 1,
     "feature_flag_key": "episode-1",
-    "feature_status": "running"
-  },
-  {
-    "titles": [
-      "مصر",
-      "كيميت"
-    ],
-    "duration": "9",
-    "id": 2,
-    "feature_flag_key": "episode-2",
-    "feature_status": "running"
-  },
-  {
-    "titles": [
-      "الروبوت",
-      "الذكاء الاصطناعي"
-    ],
-    "duration": "9",
-    "id": 3,
-    "feature_flag_key": "episode-3",
-    "feature_status": "running"
+    "feature_status": "running",
+    "experiment_id": "exp_19g61wm2eowf13"
   }
 ]

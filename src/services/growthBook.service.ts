@@ -1,10 +1,11 @@
+import { EpisodeTitleVariation } from '@/types/episode';
 import axios from 'axios';
 
 export class GrowthBookService {
   private static projectID = process.env.NEXT_PUBLIC_PROJECT_ID as string;
 
 
-    public static async createEpisodeExperiment(episodeId:number,titles:string[]): Promise<IExperimentResponse> {
+    public static async createEpisodeExperiment(episodeId:number,titles:EpisodeTitleVariation[]): Promise<IExperimentResponse> {
       const trackingKey = `episode-${episodeId}`;
       const experiment: IExperiment = {
         datasourceId: process.env.NEXT_PUBLIC_DATASOURCE_ID as string,
@@ -15,7 +16,7 @@ export class GrowthBookService {
         metrics: ["fact__19g61wm2dmwm6p"],
         status: "running",
         autoRefresh: true,
-        variations: titles.map((title,index) => ({id:index.toString(),key:index.toString(),name:title})) //key should be a number 
+        variations: titles.map((title,index) => ({id:index.toString(),key:index.toString(),name:title.title})) //key should be a number 
      }
 
       const res =  await this._createExperiment(experiment);
@@ -23,13 +24,13 @@ export class GrowthBookService {
       const experimentId = createdExperiment.id;
       const variations = createdExperiment.variations;
       for(let i = 0; i < titles.length; i++){
-        variations[i].value = titles[i]
+        variations[i].value = titles[i].title;
       }
       await this._createFeatureFlag(episodeId,experimentId as string,variations);
       return {
         experimentId: experimentId as string,
         variations: variations.map(v => ({
-            id: v.id,
+            id: v.variationId as string,
             key: v.key,
             name: v.name,
             value: v.value

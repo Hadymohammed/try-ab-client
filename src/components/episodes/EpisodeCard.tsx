@@ -17,7 +17,7 @@ const EpisodeCard: React.FC<EpisodeCardProps> = ({ episode }) => {
   const feature = useFeature(episode.feature_flag_key as string);
   const { experiment, experimentResult } = feature;
 
-  const episodeTitle = episode.feature_status == "running" ?  (useFeatureValue(episode.feature_flag_key as string,"title") as any) : episode.titles[0];
+  const episodeTitle = episode.feature_status == "running" ?  (useFeatureValue(episode.feature_flag_key as string,"title") as any) : episode.titles[0].title;
 
   const handleClick = () => {
     console.log("Episode selected event fired:", {
