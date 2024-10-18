@@ -7,21 +7,21 @@ import { getAnalytics , logEvent} from "firebase/analytics";
 import { useEffect } from 'react';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyB3A48vvfC-PcgouG7HPk7OFRmbtzGexvM",
-  authDomain: "thmanyah-sso.firebaseapp.com",
-  projectId: "thmanyah-sso",
-  storageBucket: "thmanyah-sso.appspot.com",
-  messagingSenderId: "849035368160",
-  appId: "1:849035368160:web:705f1205736e0d57c06285",
-  measurementId: "G-Z7NZ3PWRYZ"
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
 const app = initializeApp(firebaseConfig);
 export const analytics = getAnalytics(app);
 export const id =10; //this sumulates the user id
 const growthbook = new GrowthBook({
-  apiHost: "https://cdn.growthbook.io",
-  clientKey: "sdk-t9nKAlkkEe1RFKqj",
+  apiHost: process.env.NEXT_PUBLIC_GROWTHBOOK_API_HOST,
+  clientKey: process.env.NEXT_PUBLIC_GROWTHBOOK_CLIENT_KEY,
   enableDevMode: true,
   trackingCallback: (experiment, result) => {
     console.log("Experiment viewed", experiment, result);
