@@ -25,7 +25,7 @@ const EpisodeCard: React.FC<EpisodeCardProps> = ({ episode }) => {
       variation_id: experimentResult?.variationId, //which is the variation key on creating the experiment
       user_id: id.toString(),
     });
-    logEvent(analytics,"episode-selected", {
+    logEvent(analytics,"episode_selected", {
       experiment_id: experiment?.key,
       variation_id: experimentResult?.variationId,
       user_id: id.toString(),
