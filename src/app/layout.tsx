@@ -18,7 +18,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 export const analytics = getAnalytics(app);
-export const id =11; //this sumulates the user id
+export const userId =2; //this sumulates the user id
 const growthbook = new GrowthBook({
   apiHost: process.env.NEXT_PUBLIC_GROWTHBOOK_API_HOST,
   clientKey: process.env.NEXT_PUBLIC_GROWTHBOOK_CLIENT_KEY,
@@ -28,7 +28,7 @@ const growthbook = new GrowthBook({
     logEvent(analytics,"experiment_viewed", {
       experiment_id: experiment.key,
       variation_id: result.key, //which is the variation key on creating the experiment (number)
-      user_id: id.toString(),
+      user_id: userId.toString(),
     });
   },
 });
@@ -44,7 +44,7 @@ export default function RootLayout({
     });
 
     growthbook.setAttributes({
-      id: id.toString(), //based on this (used_id) the experiment will be shown with its variation
+      id: userId.toString(), //based on this (used_id) the experiment will be shown with its variation
     });
   }, []);
 

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import posthog from "posthog-js";
 import { useEffect } from "react";
 import { useFeature, useFeatureValue } from "@growthbook/growthbook-react";
-import { analytics, id } from "@/app/layout";
+import { analytics, userId } from "@/app/layout";
 import { logEvent } from "firebase/analytics";
 
 interface EpisodeCardProps {
@@ -23,12 +23,12 @@ const EpisodeCard: React.FC<EpisodeCardProps> = ({ episode }) => {
     console.log("Episode selected event fired:", {
       experiment_id: experiment?.key,
       variation_id: experimentResult?.variationId, //which is the variation key on creating the experiment
-      user_id: id.toString(),
+      user_id: userId.toString(),
     });
     logEvent(analytics,"episode_selected", {
       experiment_id: experiment?.key,
       variation_id: experimentResult?.variationId,
-      user_id: id.toString(),
+      user_id: userId.toString(),
     });
     router.push(`/episodes/${episode.id}`);
   };

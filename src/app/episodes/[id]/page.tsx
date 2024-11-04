@@ -9,8 +9,7 @@ import { useFeature, useFeatureValue } from "@growthbook/growthbook-react";
 import { GrowthBookService, IExperimentResult } from "@/services/growthBook.service";
 import ReactPlayer from "react-player";
 import { logEvent } from "firebase/analytics";
-import { analytics } from "@/app/layout";
-import exp from "constants";
+import { analytics, userId } from "@/app/layout";
 
 interface EpisodePageProps {
   params: { id: string };
@@ -107,11 +106,11 @@ const EpisodePage = ({ params }: EpisodePageProps) => {
           setDuration(duration);
         }}
         onProgress={(progress) => {
-          logEvent(analytics, "episode-listened", {
+          logEvent(analytics, "episode_listened", {
             episode_id: episode.id.toString(),
             experiment_id: experiment?.key,
             variation_id: experimentResult?.variationId,
-            user_id: id.toString(),
+            user_id: userId.toString(),
             played_seconds: progress.playedSeconds,
             duration: duration,
           })
