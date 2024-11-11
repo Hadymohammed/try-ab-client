@@ -18,18 +18,18 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 export const analytics = getAnalytics(app);
-export const userId =2; //this sumulates the user id
+export const userId =4; //this sumulates the user id
 const growthbook = new GrowthBook({
   apiHost: process.env.NEXT_PUBLIC_GROWTHBOOK_API_HOST,
   clientKey: process.env.NEXT_PUBLIC_GROWTHBOOK_CLIENT_KEY,
   enableDevMode: true,
   trackingCallback: (experiment, result) => {
     // console.log("Experiment viewed", result.key);
-    logEvent(analytics,"experiment_viewed", {
-      experiment_id: experiment.key,
-      variation_id: result.key, //which is the variation key on creating the experiment (number)
-      user_id: userId.toString(),
-    });
+    // logEvent(analytics,"experiment_viewed", {
+    //   experiment_id: experiment.key,
+    //   variation_id: result.key, //which is the variation key on creating the experiment (number)
+    //   user_id: userId.toString(),
+    // });
   },
 });
 export default function RootLayout({

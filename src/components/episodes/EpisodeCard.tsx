@@ -1,9 +1,7 @@
-// src/components/EpisodeCard.tsx
 import { Card, CardContent, Typography } from "@mui/material";
 import { Episode } from "../../types/episode";
 import { useRouter } from "next/navigation";
-import posthog from "posthog-js";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useFeature, useFeatureValue } from "@growthbook/growthbook-react";
 import { analytics, userId } from "@/app/layout";
 import { logEvent } from "firebase/analytics";
@@ -14,6 +12,7 @@ interface EpisodeCardProps {
 
 const EpisodeCard: React.FC<EpisodeCardProps> = ({ episode }) => {
   const router = useRouter();
+  const [viewedFired,setViewedFired] = useState(false);
   const feature = useFeature(episode.feature_flag_key as string);
   const { experiment, experimentResult } = feature;
 
@@ -33,6 +32,17 @@ const EpisodeCard: React.FC<EpisodeCardProps> = ({ episode }) => {
     router.push(`/episodes/${episode.id}`);
   };
 
+  useEffect(()=>{
+    if(!viewedFired){
+      logEvent(analytics,"experiment_viewed", {
+        experiment_id: experiment?.key,
+        variation_id: experimentResult?.variationId,
+        user_id: userId.toString(),
+      });
+      setViewedFired(true);
+    }
+      
+  },[])
   return (
     <Card onClick={handleClick} style={{ margin: "10px", cursor: "pointer" }}>
       <CardContent>
