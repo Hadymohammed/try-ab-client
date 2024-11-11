@@ -47,6 +47,7 @@ export default function RootLayout({
     posthog.init(POSTHOG_API_KEY, {
       api_host: POSTHOG_HOST_URL,
       persistence: "memory", // Use memory persistence for Next.js
+      autocapture: false
     });
   }
   useEffect(() => {
