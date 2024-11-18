@@ -24,7 +24,7 @@ const EpisodePage = ({ params }: EpisodePageProps) => {
   const [episodeTitle, setEpisodeTitle] = useState<string | null>(null);
   const [results, setResult] = useState<IExperimentResult | null>(null);
   const [duration, setDuration] = useState<number | null>(null);
-  const [event, setEvent] = useState<string>("download");
+  const [event, setEvent] = useState<string>("impression");
   const [formData, setFormData] = useState<any>({});
 
   const dropdownOptions = {
@@ -75,8 +75,12 @@ const EpisodePage = ({ params }: EpisodePageProps) => {
 
   const events = [
     {
-      event: "download",
-      fields: ["episodeId", "podcastId", "tenentId"],
+      event: "track",
+      fields: [
+        "episodeId",
+        "podcastId",
+        "tenentId",
+      ],
     },
     {
       event: "listen",
