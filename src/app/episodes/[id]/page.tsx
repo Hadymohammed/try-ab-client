@@ -10,6 +10,7 @@ import { GrowthBookService, IExperimentResult } from "@/services/growthBook.serv
 import ReactPlayer from "react-player";
 import { logEvent } from "firebase/analytics";
 import { analytics, userId } from "@/app/layout";
+import CustomPlayer from "@/components/episodes/CustomPlayer";
 
 interface EpisodePageProps {
   params: { id: string };
@@ -97,28 +98,7 @@ const EpisodePage = ({ params }: EpisodePageProps) => {
           Back
         </Button>
       </Box>
-      <ReactPlayer
-        url={episode.audio_url}
-        progressInterval={1000}
-        controls
-        onDuration={(duration) => {
-          console.log("Episode duration:", duration);
-          setDuration(duration);
-        }}
-        onProgress={(progress) => {
-          logEvent(analytics, "episode_listened", {
-            episode_id: episode.id.toString(),
-            experiment_id: experiment?.key,
-            variation_id: experimentResult?.variationId,
-            user_id: userId.toString(),
-            played_seconds: progress.playedSeconds,
-            duration: duration,
-          })
-        }}
-        className="mt-4"
-        width="100%"
-      />
-
+      <CustomPlayer url="https://vod.thmanyah.com/7a3750780f3447ea8d634ad3ec6b4cbd/master.m3u8" />
       {results && (
         <Box mt={6}>
           <Typography variant="h5" gutterBottom>

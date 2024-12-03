@@ -18,6 +18,7 @@
     "axios": "^1.7.7",
     "firebase": "^10.14.1",
     "growthbook": "^0.2.3",
+    "hls.js": "^1.5.17",
     "next": "14.2.15",
     "posthog-js": "^1.167.1",
     "react": "^18",
